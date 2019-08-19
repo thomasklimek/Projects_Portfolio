@@ -1,0 +1,15 @@
+Thomas Klimek
+
+
+The dependencies of my project are:
+autograd
+matplotlib
+numpy
+python 3.5 or later
+
+to run - python3 titanic.py
+	   - python3 mnist.py
+
+Issues:
+Could not get my file to pickle without errors
+Occasional Low accuracy rates

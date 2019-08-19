@@ -1,0 +1,12 @@
+README
+Thomas Klimek
+
+To Generate Graphs From Part 1:
+1. In the main function of RunTest call the function compareRL();
+2. Repeat this for different RL algorithms and feature sets
+3. This data was averaged and plotted using python and google sheets
+
+To Generate Graphs From Part 2:
+1. In the main function of RunTest call the function tamer();
+2. To train the agent use the "1" key for positive reward, and use the "2" key for negative reward
+3. This data was plotted using python and google sheets

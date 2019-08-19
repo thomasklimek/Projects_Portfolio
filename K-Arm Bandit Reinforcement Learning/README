@@ -1,0 +1,31 @@
+README - Thomas Klimek
+
+Dependecies:
+	python 3
+	matplotlib, numpy
+	--> python3 -m pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose
+
+To run the program simply:
+	python3 bandit.py
+
+Bandit Class:
+--> Simulates a 10-arm bandit. Has functions for random walk, generate reward, get optimal arm, and reset arms to initial value.
+--> can be initialized with an argument to set initial value
+
+Agent Class:
+--> super class for the algorithms
+--> stores steps, epsilon, and alpha values
+
+Sample_Average Class:
+--> class for an incremental step size algorithm
+--> performs algorithm on page 24 of Suton and Barto
+
+Weighted_Average Class:
+--> class for an constant step size algorithm
+--> performs algorithm on page 24 of Suton and Barto, with recency weighted predicitions described on page 25
+
+Statistics Class:
+--> stores the running average for % optimal, and average reward per trialin the arrays average_rewards and optimal_percentages
+--> keeps track of the average values of those two arrays all the trials in the dictionary avg_data where the key 'avg' stores the average rewards and the key 'opt' stores the optimal percentages
+
+I referenced the implementation found at https://medium.com/harder-choices/non-stationary-k-armed-bandit-problem-reinforcement-learning-cd391cc46356 to help build my program.

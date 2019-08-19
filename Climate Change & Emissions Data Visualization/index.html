@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script src="https://d3js.org/queue.v1.min.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.1/crossfilter.min.js"></script>
+  <script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
+  <style>
+
+    *{
+    font-family: 'Work Sans', sans-serif;
+  }
+  .tick:hover{
+    cursor: pointer;
+  }
+  path:hover{
+    cursor: pointer;
+  }
+
+    #title {
+  text-align: center;
+  padding-bottom: 60px;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+  img{
+    position: fixed;
+    left: 3%;
+    max-width: 8%;
+    height: auto;
+  }
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  background-color: #fff ;
+  margin: 0;
+
+}
+.header {
+  overflow: hidden;
+  background-color: #f6f5f3  ;
+  position: relative; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+  text-align: center;
+  color: #3d3d3f;
+  font-family: 'Work Sans', sans-serif;
+
+  }
+  h2{
+    font-size: 28px;
+  }
+svg {
+  font-size: 10px;
+}
+text {
+  font-size: 10px;
+}
+
+.q0{fill:rgb(255,255,204)}
+.q1{fill:rgb(255,237,160)}
+.q2{fill:rgb(254,217,118)}
+.q3{fill:rgb(254,178,76)}
+.q4{fill:rgb(253,141,60)}
+.q5{fill:rgb(252,78,42)}
+.q6{fill:rgb(227,26,28)}
+.q7{fill:rgb(189,0,38)}
+.q8{fill:rgb(128,0,38)}
+
+.c0{fill:rgb(247,252,245)} 
+.c1{fill:rgb(229,245,224)} 
+.c2{fill:rgb(199,233,192)} 
+.c3{fill:rgb(161,217,155)} 
+.c4{fill:rgb(116,196,118)} 
+.c5{fill:rgb(65,171,93)} 
+.c6{fill:rgb(35,139,69)} 
+.c7{fill:rgb(0,109,44)} 
+.c8{fill:rgb(0,68,27)}
+
+ /* bar chart styling */
+   .bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: lightblue;
+}
+path:hover {
+  opacity: 0.4;
+}
+
+.axis text {
+  font: 12px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.tooltip {
+  position: absolute;
+  padding: 10px;
+  font: 12px sans-serif;
+  background: #222;
+  color: #fff;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0.9;
+  visibility: hidden;
+}
+.tooltip2 {
+  position: absolute;
+  padding: 10px;
+  font: 12px sans-serif;
+  background: #222;
+  color: #fff;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0.9;
+  visibility: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: 100%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  display: table;
+  clear: both;
+}
+
+/* this is the style of an unchecked "button" */
+    .input-check.checked{
+        
+        background:green;
+        
+        color:white
+    }
+    /* This is the style for a checked "button" */
+    .input-check{
+      display:inline-block;
+        padding:7px 20px;
+
+        background:red;
+        color:black;
+        font-weight:bold;
+        font-size: 18px;
+        top: 85%;
+        left:20%;
+        position: fixed;
+        
+    }
+    #button:hover{
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+    /* Hide the checkbox */
+    .input-check input{
+        display:none
+    }
+    .vizoptions *{
+      display: inline;
+    }
+    .slide {
+      position: fixed;
+      color: #3d3d3f;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 24px;
+      top:85%;
+      left: 53%;
+    }
+
+    .legend{
+      position: fixed;
+      top:300px;
+      left:42%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header" id="myHeader">
+    <img src="lildrippyglobe.png" alt="Lil drippy globe">
+    <h2>Cows, Cars, and Climate Change</h2>
+    <h3> Thomas Klimek and Ryan Koch </h3>
+  </div>
+
+  <div class="row">
+
+    <div id="methaneMap" class="column">
+      <h1 class="title"></h1></br>
+
+
+    </div>
+
+    <div id="cowChart" class="column">
+      <h1 id="cowChartTitle" class="title"></h1></br>
+    </div>
+
+  </div>
+  <div class="vizoptions">
+    <label class="input-check" id="button"><input onchange="change_state(this)" type="checkbox" />
+      <div>methane</div>
+    </label>
+
+
+  </div>
+  <div class="slide">
+
+    <form>
+      <label for="year">Please select a year: </label>
+      <input type="range" min=2013 max=2017 step=1 id="year" value=2013 oninput="selected_year.value = year.value">
+      <output name="selected_year" id="selected_year">2013</output>
+    </form>
+  </div>
+
+
+  <script>
+    function drawLegend() {
+      if (maptype == 1) {
+        var legendDimensions = [
+          { "x_axis": 24, "y_axis": 100, "text": "None", "color": "rgb(255,255,204)" },
+          { "x_axis": 24, "y_axis": 75, "text": "Low", "color": "rgb(255,255,204)" },
+          { "x_axis": 24, "y_axis": 50, "text": "Moderate", "color": "rgb(253,141,60)" },
+          { "x_axis": 24, "y_axis": 25, "text": "Severe", "color": "rgb(227,26,28)" },
+          { "x_axis": 24, "y_axis": 0, "text": "Danger Zone", "color": "rgb(128,0,38)" }];
+      }
+      else {
+        var legendDimensions = [
+          { "x_axis": 24, "y_axis": 100, "text": "None", "color": "rgb(247,252,245)" },
+          { "x_axis": 24, "y_axis": 75, "text": "Low", "color": "rgb(199,233,192)" },
+          { "x_axis": 24, "y_axis": 50, "text": "Moderate", "color": "rgb(116,196,118)" },
+          { "x_axis": 24, "y_axis": 25, "text": "Severe", "color": "rgb(35,139,69)" },
+          { "x_axis": 24, "y_axis": 0, "text": "Danger Zone", "color": "rgb(0,68,27)" }];
+      }
+
+      var legendContainer = d3.select("body").append("svg")
+        .attr("class", "legend")
+        .attr("width", 140)
+        .attr("height", 200);
+
+      var rectangles = legendContainer.append("rect")
+        .attr("x", 24)
+        .attr("y", 9)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", "grey");
+
+      var colors = legendContainer.selectAll("rect")
+        .data(legendDimensions)
+        .enter()
+        .append("rect")
+        .attr("x", function (d) { return d.x_axis; })
+        .attr("y", function (d) { return d.y_axis; })
+        .attr("fill", function (d) { return d.color; })
+        .attr("width", 18)
+        .attr("height", "18px");
+
+      var text = legendContainer.selectAll("text")
+        .data(legendDimensions)
+        .enter()
+        .append("text")
+        .attr("x", 42)
+        .text(function (d) { return d.text; })
+        .attr("y", function (d) { return d.y_axis + 20; })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "17px")
+        .attr("fill", "black");
+
+      var rectAttributes = rectangles
+        .attr("x", function (d) { return d.x_axis; })
+        .attr("y", function (d) { return d.y_axis; });
+    }
+    var selections = ['AR', 'TX', 'MA', 'NM', 'UT', 'OH', 'MO', 'NY', 'NC']
+    var datafiles = {}
+    var cardatafiles = {}
+    var maptype = 1;
+    function drawBarChart(year) {
+      if (maptype == 1)
+        inputdata = datafiles
+      else
+        inputdata = cardatafiles
+      d3.select("#cowChart").select("svg").remove()
+      // Set the dimensions of cowChart
+      var chartMargin = { top: 30, right: 20, bottom: 30, left: 50 },
+        chartWidth = 600 - chartMargin.left - chartMargin.right,
+        chartHeight = 420 - chartMargin.top - chartMargin.bottom;
+
+      // Get the data
+      d3.csv(inputdata[year], function (error, data) {
+        data.forEach(function (d) {
+          // not sure if the two following lines are necessary
+          if (selections.includes(d.state))
+            if (maptype == 1)
+              d.value = +d.value;
+            else
+              d.value = +d.value / 1000000;
+          // return d.value;
+        });
+
+        // Scale cowChart
+        var x = d3.scale.ordinal()
+          .domain(selections)
+          .rangeRoundBands([0, chartWidth], .1);
+
+        var y = d3.scale.linear()
+          .domain([0, d3.max(data, function (d) {
+            if (selections.includes(d.state))
+              return d.value;
+          })])
+          .range([chartHeight, 0], 0.1);
+
+        // Define the axis cowChart
+        var xAxis = d3.svg.axis().scale(x)
+          .orient("bottom").ticks(10);
+
+        var yAxis = d3.svg.axis().scale(y)
+          .orient("left").ticks(10);
+
+
+
+        // Adds the svg canvas, preserveAspectRatio makes the svg fit to the div dynamically
+        var cowChart = d3.select("#cowChart")
+          .append("svg")
+          .attr("preserveAspectRatio", "xMinYMin meet")
+          .attr("viewBox", "0 0 750 500")
+          .append("g")
+          .attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")");
+
+
+        // chart name
+        if (maptype == 1)
+          var chartTitle = "Milk Cows by State";
+        else
+          var chartTitle = "Cars by State";
+        var cowCharttitle = d3.select("#cowChartTitle")
+          .text(chartTitle);
+
+
+        // Add the X Axis
+        cowChart.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + chartHeight + ")")
+          .call(xAxis);
+
+
+        d3.selectAll(".tick").on("click", function () {
+          console.log(this.childNodes[1].innerHTML);
+          selections.splice(selections.indexOf(this.childNodes[1].innerHTML), 1);
+          year = d3.select('#year').attr("value")
+          drawBarChart(year);
+        });
+
+        // text label for the x axis
+        cowChart.append("text")
+          .attr("x", chartWidth / 2)
+          .attr("y", (chartHeight + 20) + chartMargin.bottom)
+          .style("text-anchor", "middle")
+          .style("font-size", "14px")
+          .text("State");
+
+        // Add the Y Axis
+        cowChart.append("g")
+          .attr("class", "y axis")
+          .call(yAxis);
+
+        // label for y axis
+        cowChart.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - chartMargin.left)
+          .attr("x", 0 - ((chartHeight + 20) / 2))
+          .attr("dy", "1em")
+          .style("font-size", "14px")
+          .style("text-anchor", "middle")
+          .text("");
+
+        // give bars some room
+        var barPadding = 1;
+
+        var bar = cowChart.selectAll(".bar")
+          .data(data)
+          .enter().append("rect")
+          .attr("class", "bar")
+          .attr("width", chartWidth / selections.length - barPadding)
+          .attr("height", function (d) {
+            if (selections.includes(d.state))
+              return y(0) - y(d.value);  //Just the data value
+          })
+          .attr("x", function (d, i) {
+            if (selections.includes(d.state))
+              return x(d.state)
+            //return i * ( - barPadding);
+          })
+          .attr("y", function (d) {
+            if (selections.includes(d.state))
+              return y(d.value);  //Height minus data value
+          })
+          .attr("fill", function (d) {
+            if (selections.includes(d.state))
+              return "rgb(0, 0, " + (d.value * 10) + ")";
+          });
+
+        // Tooltip
+        d3.select(".tooltip").remove()
+        var tooltip = d3.select("body").append("div")
+          .attr("class", "tooltip");
+
+        bar.on("mouseover", function (d) {
+          if (maptype == 1)
+            tooltip.html(d.value + " Thousand Cows")
+              .style("visibility", "visible");
+          else
+            tooltip.html(Math.round(d.value * 100) / 100 + " Million Cars")
+              .style("visibility", "visible");
+        })
+          .on("mousemove", function (d) {
+            tooltip.style("top", event.pageY - (tooltip[0][0].clientHeight + 5) + "px")
+              .style("left", event.pageX - (tooltip[0][0].clientWidth / 2.0) + "px");
+          })
+          .on("mouseout", function (d) {
+            tooltip.style("visibility", "hidden");
+          });
+      });
+    }
+
+
+    // methane map
+
+
+    var svg = d3.select("#methaneMap")
+      .append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", "0 0 960 500");
+
+    var usmap;
+
+    var quantize3 = d3.scale.log()
+      .domain([162432, 412011301])
+
+    var quantize4 = d3.scale.quantize()
+      .domain([0, 1])
+      .range(d3.range(8).map(function (i) { return "c" + i; }));
+
+    var quantize = d3.scale.log()
+      .domain([58201, 50203393]);
+
+    var quantize2 = d3.scale.quantize()
+      .domain([0, 1])
+      .range(d3.range(8).map(function (i) { return "q" + i; }));
+
+    var data = {};
+    var codata = {};
+    var polutionById2013 = d3.map();
+    var polutionById2014 = d3.map();
+    var polutionById2015 = d3.map();
+    var polutionById2016 = d3.map();
+    var polutionById2017 = d3.map();
+    var coById2013 = d3.map();
+    var coById2014 = d3.map();
+    var coById2015 = d3.map();
+    var coById2016 = d3.map();
+    var coById2017 = d3.map();
+    var stateFips = d3.map();
+
+    var path = d3.geo.path();
+    queue()
+      .defer(d3.json, "us.json")
+      .defer(d3.csv, "2013.csv", function (d) {
+        if (typeof polutionById2013.get(d.STATE) !== 'undefined') {
+          var sumdata = polutionById2013.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          polutionById2013.set(d.STATE, sumdata);
+        }
+        else {
+          polutionById2013.set(d.STATE, parseInt(d.VALUE));
+        }
+
+      })
+      .defer(d3.csv, "2014.csv", function (d) {
+        if (typeof polutionById2014.get(d.STATE) !== 'undefined') {
+          var sumdata = polutionById2014.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          polutionById2014.set(d.STATE, sumdata);
+        }
+        else {
+          polutionById2014.set(d.STATE, parseInt(d.VALUE));
+        }
+
+      })
+      .defer(d3.csv, "2015.csv", function (d) {
+        if (typeof polutionById2015.get(d.STATE) !== 'undefined') {
+          var sumdata = polutionById2015.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          polutionById2015.set(d.STATE, sumdata);
+        }
+        else {
+          polutionById2015.set(d.STATE, parseInt(d.VALUE));
+        }
+
+      })
+      .defer(d3.csv, "2016.csv", function (d) {
+        if (typeof polutionById2016.get(d.STATE) !== 'undefined') {
+          var sumdata = polutionById2016.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          polutionById2016.set(d.STATE, sumdata);
+        }
+        else
+          polutionById2016.set(d.STATE, parseInt(d.VALUE));
+
+      })
+      .defer(d3.csv, "2017.csv", function (d) {
+        if (typeof polutionById2017.get(d.STATE) !== 'undefined') {
+          var sumdata = polutionById2017.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          polutionById2017.set(d.STATE, sumdata); 4
+        }
+        else
+          polutionById2017.set(d.STATE, parseInt(d.VALUE));
+
+      })
+      .defer(d3.csv, "co2013.csv", function (d) {
+        if (typeof coById2013.get(d.STATE) !== 'undefined') {
+          var sumdata = coById2013.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          coById2013.set(d.STATE, sumdata);
+        }
+        else {
+          coById2013.set(d.STATE, parseInt(d.VALUE));
+        }
+
+      })
+      .defer(d3.csv, "co2014.csv", function (d) {
+        if (typeof coById2014.get(d.STATE) !== 'undefined') {
+          var sumdata = coById2014.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          coById2014.set(d.STATE, sumdata);
+        }
+        else {
+          coById2014.set(d.STATE, parseInt(d.VALUE));
+        }
+
+      })
+      .defer(d3.csv, "co2015.csv", function (d) {
+        if (typeof coById2015.get(d.STATE) !== 'undefined') {
+          var sumdata = coById2015.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          coById2015.set(d.STATE, sumdata);
+        }
+        else {
+          coById2015.set(d.STATE, parseInt(d.VALUE));
+        }
+
+      })
+      .defer(d3.csv, "co2016.csv", function (d) {
+        if (typeof coById2016.get(d.STATE) !== 'undefined') {
+          var sumdata = coById2016.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          coById2016.set(d.STATE, sumdata);
+        }
+        else
+          coById2016.set(d.STATE, parseInt(d.VALUE));
+
+      })
+      .defer(d3.csv, "2017.csv", function (d) {
+        if (typeof coById2017.get(d.STATE) !== 'undefined') {
+          var sumdata = coById2017.get(d.STATE);
+          sumdata += parseInt(d.VALUE);
+          coById2017.set(d.STATE, sumdata);
+        }
+        else
+          coById2017.set(d.STATE, parseInt(d.VALUE));
+
+      })
+      .defer(d3.csv, "state-fips.csv", function (d) {
+        stateFips.set(d.state, d.state_abbr);
+      })
+      .await(ready);
+
+    function ready(error, us) {
+      if (error) throw error;
+      usmap = us;
+      data['2013'] = polutionById2013;
+      data['2014'] = polutionById2014;
+      data['2015'] = polutionById2015;
+      data['2016'] = polutionById2016;
+      data['2017'] = polutionById2017;
+      codata['2013'] = coById2013;
+      codata['2014'] = coById2014;
+      codata['2015'] = coById2015;
+      codata['2016'] = coById2016;
+      codata['2017'] = coById2017;
+      datafiles['2013'] = "cows2013.csv";
+      datafiles['2014'] = "cows2014.csv";
+      datafiles['2015'] = "cows2015.csv";
+      datafiles['2016'] = "cows2016.csv";
+      datafiles['2017'] = "cows2017.csv";
+      cardatafiles['2013'] = "cars2013.csv";
+      cardatafiles['2014'] = "cars2014.csv";
+      cardatafiles['2015'] = "cars2015.csv";
+      cardatafiles['2016'] = "cars2016.csv";
+      cardatafiles['2017'] = "cars2017.csv";
+      drawBarChart('2013');
+      draw('2013');
+    }
+
+    function draw(year) {
+      d3.select('.legend').remove();
+      drawLegend();
+      if (maptype == 1)
+        var title = d3.select("h1").text("Methane Production by State");
+      else
+        var title = d3.select("h1").text("CO2 Production by State");
+      var min = 100000000000;
+      var max = 0;
+      if (maptype == 1) {
+        mapping = data[year];
+      }
+      else {
+        mapping = codata[year];
+      }
+      d3.select(".counties").remove();
+      svg.append("g")
+        .attr("class", "counties")
+        .selectAll("path")
+        .data(topojson.feature(usmap, usmap.objects.states).features)
+        .enter().append("path")
+        .attr("class", function (d) {
+
+          sname = stateFips.get(d.id);
+          var dataval = mapping.get(sname);
+          if (parseInt(dataval) < min)
+            min = parseInt(dataval)
+          if (parseInt(dataval) > max)
+            max = parseInt(dataval)
+          if (maptype == 1)
+            return quantize2(quantize(dataval));
+          else {
+            return quantize4(quantize3(dataval));
+          }
+
+        })
+        .attr("id", function (d) { return d.COUNTY; })
+        .attr("d", path)
+        .on("click", function (d) {
+          if (selections.includes(stateFips.get(d.id)))
+            selections.splice(selections.indexOf(stateFips.get(d.id)), 1)
+          else
+            selections.push(stateFips.get(d.id))
+          drawBarChart(year)
+        });
+
+      d3.select(".tooltip2").remove()
+      var tooltip2 = d3.select("#methaneMap").append("div")
+        .attr("class", "tooltip2");
+
+      d3.selectAll("path").on("mouseover", function (d) {
+        sname = stateFips.get(d.id);
+        var dataval = mapping.get(sname);
+        if (maptype == 1)
+          tooltip2.html(sname + ": " + Math.round((dataval / 1000000 * 100)) / 100 + " Million Metric Tons of Methane")
+            .style("visibility", "visible");
+        else
+          tooltip2.html(sname + ": " + Math.round((dataval / 1000000 * 100)) / 100 + " Million Metric Tons of C02")
+            .style("visibility", "visible");
+      })
+        .on("mousemove", function (d) {
+          tooltip2.style("top", event.pageY - (tooltip2[0][0].clientHeight + 5) + "px")
+            .style("left", event.pageX - (tooltip2[0][0].clientWidth / 2.0) + "px");
+        })
+        .on("mouseout", function (d) {
+          tooltip2.style("visibility", "hidden");
+        });
+    }
+
+    var slider = d3.select('#year');
+    slider.on('change', function () {
+      slider.attr("value", this.value);
+      drawBarChart(this.value);
+      draw(this.value);
+
+    });
+
+
+    function change_state(obj) {
+      if (obj.checked) {
+
+        obj.parentNode.classList.add("checked");
+        d3.select(".input-check").select("div").text("C02");
+        maptype = 2;
+        year = d3.select('#year').attr("value")
+        drawBarChart(year);
+        draw(year);
+
+      }
+      else {
+        obj.parentNode.classList.remove("checked");
+        d3.select(".input-check").select("div").text("Methane");
+        maptype = 1;
+        year = d3.select('#year').attr("value")
+        drawBarChart(year);
+        draw(year);
+      }
+    }
+  </script>

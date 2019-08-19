@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Song2</title>
+
+    <style>
+    html, body {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #renderCanvas {
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+    }
+    </style>
+
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+</head>
+
+<body>
+
+    <canvas id="renderCanvas" touch-action="none"></canvas> //touch-action="none" for best results from PEP
+
+    <script>
+
+        var counter = 1;
+        var score = 0;
+        var canvas = document.getElementById("renderCanvas"); // Get the canvas element 
+        var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+
+        /******* Add the create scene function ******/
+        var url = "https://cdn.rawgit.com/BabylonJS/Extensions/master/DynamicTerrain/dist/babylon.dynamicTerrain.min.js";
+        var s = document.createElement("script");
+        s.src = url;
+        document.head.appendChild(s);
+
+
+        var createScene = function() {
+            var scene = new BABYLON.Scene(engine);
+
+            var song = new BABYLON.Sound("Song", "song2-assets/song2.wav", scene, null, {loop: true, autoplay: true});    
+
+            scene.collisionsEnabled = true;
+            //var skyColor = new BABYLON.Color4( .4, .6, .9, 1.0);
+            //scene.clearColor = skyColor;
+            var camera = new BABYLON.FreeCamera("camera1",   new BABYLON.Vector3(0.0, 100.0, 0.0), scene);
+            camera.attachControl(canvas, true);
+            camera.ellipsoid = new BABYLON.Vector3(2, 2, 2);
+
+            camera.checkCollisions = true;
+
+  
+
+            // Materials
+            var mat = new BABYLON.StandardMaterial("mat", scene);
+            mat.diffuseColor = new BABYLON.Color3(1,0,0);
+            var leftWing = BABYLON.MeshBuilder.CreateBox("leftWing", {size: 0.25, width: 0.5, height: 2}, scene);
+            leftWing.rotate(BABYLON.Axis.Z, Math.PI/4, BABYLON.Space.OBJECT);
+
+            var rightWing = BABYLON.MeshBuilder.CreateBox("rightWing", {size: 0.25, width: 0.5, height: 2}, scene);
+            rightWing.position.y -=1;
+            rightWing.rotate(BABYLON.Axis.Z, -Math.PI/4, BABYLON.Space.OBJECT);
+
+            var cockPit = BABYLON.MeshBuilder.CreateSphere("cockPit",{diameter: 0.8}, scene);
+            cockPit.position.y -= 0.5;
+            cockPit.position.x += 0.5;
+
+            var plane = BABYLON.Mesh.MergeMeshes([leftWing, rightWing, cockPit]);
+            plane.material = mat;
+            plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.OBJECT);
+
+            plane.rotate(BABYLON.Axis.Z, Math.PI/2, BABYLON.Space.OBJECT);
+            plane.parent = camera;
+            plane.position.z +=5;
+            plane.position.x -=.5;
+
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0.0, 1.0, 0.0), scene);
+            light.intensity = 0.75;
+            light.specular = BABYLON.Color3.Black();
+
+            // Skybox
+            var hdrTexture = new BABYLON.CubeTexture("song2-assets/sky.jpg", scene);
+            scene.createDefaultSkybox(hdrTexture, true, 10000);    
+
+
+    // Texture and material
+    var url = "song2-assets/texture.jpg";
+    var terrainTexture = new BABYLON.Texture(url, scene);
+    
+    var terrainMaterial = new BABYLON.StandardMaterial("tm", scene);
+    terrainMaterial.diffuseTexture = terrainTexture;
+    var terrainCreated = false;
+    var terrain;
+
+    // wait for dynamic terrain extension to be loaded
+    s.onload = function() {
+
+        // callback function : terrain creation
+        
+        var createTerrain = function(mapData, mapSubX, mapSubZ) {
+            var params = {
+                mapData: mapData,               // data map declaration : what data to use ?
+                mapSubX: mapSubX,               // how are these data stored by rows and columns
+                mapSubZ: mapSubZ,
+                terrainSub: 120
+            };
+            terrain = new BABYLON.DynamicTerrain("t", params, scene);
+            terrain.subToleranceX = 16;
+            terrain.subToleranceZ = 16;
+            terrain.mesh.checkCollisions = true;
+            terrain.LODLimits = [4, 3, 2, 1, 1];
+            terrain.createUVMap();             // compute the UVs to stretch the image on the whole map
+            terrain.mesh.material = terrainMaterial;
+            terrainCreated = true;
+            terrain.update(true);
+
+        };
+
+        // Data Map
+        var hmURL = "song2-assets/heightmap.jpg";
+        var mapWidth = 1000;
+        var mapHeight = 1000;
+        var nbPoints = 500;
+        var hmOptions = {
+            width: mapWidth, height: mapHeight, 
+            minHeight: -100, maxHeight: 150,         // map size in the World 
+            subX: nbPoints, subZ: nbPoints,              // number of points on map width and height
+            onReady: createTerrain                       // callback function declaration
+        };
+
+        var mapData = new Float32Array(nbPoints * nbPoints * 3); // the array that will store the generated data
+        BABYLON.DynamicTerrain.CreateMapFromHeightMapToRef(hmURL, hmOptions, mapData, scene);
+        
+
+
+
+
+
+        /// SCORE ******************************************************************************
+        var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 512, scene, true);
+    dynamicTexture.hasAlpha = true;
+    var name = "Score: "; 
+    var ctx =  dynamicTexture.getContext();
+    var font = "bold 52px verdana";
+    ctx.font= font; 
+    var width = ctx.measureText(name).width;
+    dynamicTexture.drawText(name, 256 - width/2, 52, font, "lightblue", ""); //write "red" into the last parameter to see the nameplate
+    dynamicTexture.uScale = 1;
+    dynamicTexture.vScale = 0.125;
+    dynamicTexture.update(false);
+
+    var result = BABYLON.Mesh.CreatePlane("nameplate", 10, scene, false);
+    result.rotation.x = Math.PI;
+    result.scaling.y = 0.125;
+    result.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+    var mat = new BABYLON.StandardMaterial("nameplateMat", scene);
+    mat.diffuseTexture = dynamicTexture;
+    mat.backFaceCulling = false;
+
+    result.material = mat;
+
+
+    result.parent = camera;
+    result.position.z += 10;
+    
+       
+    function changeText() {
+        dynamicTexture.update(true);
+        dynamicTexture.getContext().clearRect(0, 0, dynamicTexture.getSize().width, dynamicTexture.getSize().height); 
+        dynamicTexture.drawText(score.toFixed(2), 256 - width / 2 + 10, 52, font, "lightblue", "");
+        dynamicTexture.update(false);
+        //score += 1;
+        if (terrainCreated){
+            var scoremodifier = camera.position.y - terrain.getHeightFromMap(camera.position.x, camera.position.z);
+            scoremodifier = 1 / scoremodifier;
+
+            score += scoremodifier;
+            
+
+        }
+
+        setTimeout(changeText, 100);
+    }
+
+    changeText();
+
+
+    // **********************
+    }   // onload closing bracket
+
+    scene.registerAfterRender(function () {
+
+        if (terrainCreated){
+            altitude = terrain.getHeightFromMap(camera.position.x, camera.position.z);
+            if (camera.position.y < altitude){
+                console.log("Boom");
+                song.stop();
+                engine.stopRenderLoop();
+                window.alert("GAME OVER! Your Score: " + score.toFixed(2));
+
+            }
+            var direction = camera.getDirection(BABYLON.Vector3.Forward());
+            camera.position.x += direction.x * counter;
+            camera.position.y += direction.y * counter;
+            camera.position.z += direction.z * counter;
+            counter += 0.001;
+        }
+        
+        //console.log(direction);
+    });
+
+    return scene;
+}
+
+
+        var scene = createScene(); //Call the createScene function
+
+        // Register a render loop to repeatedly render the scene
+        engine.runRenderLoop(function () { 
+            scene.render();
+        });
+
+        // Watch for browser/canvas resize events
+        window.addEventListener("resize", function () { 
+            engine.resize();
+        });
+
+
+        </script>
+
+    </body>
+
+    </html>

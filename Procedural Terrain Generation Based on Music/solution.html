@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>solution</title>
+
+        <style>
+            html, body {
+
+                margin: 0;
+                padding: 0;
+                                font-family: 'Space Mono', monospace;
+
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+            .header{
+                text-align: center;
+                font-family: 'Space Mono', monospace;
+                /*position: absolute;*/
+                left: 40%;
+            }
+            .nav{
+                font-family: 'Space Mono', monospace;
+                position: absolute;
+                top: 0%;
+                right: 2%;
+            }
+            .nav:hover, a:hover{
+                text-decoration: underline;
+                cursor: crosshair;
+            }
+            a{
+                font-family: 'Space Mono', monospace;
+            }
+            .desc{
+                margin-left:5%;
+                margin-right: 5%;
+            }
+            img{
+                max-width:40%;
+                height:auto;
+            }
+            #map{
+                max-width:30%;
+                height:auto;
+            }
+        </style>
+
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+        <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="sceneloader.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+    </head>
+
+   <body>
+
+    <div class="header">
+        <h1>Musical Terrain</h1>
+        <p>Thomas Klimek Samuel Oakley</p>
+    </div>
+    <div class="nav">
+        <a href="menu.html">go back</a>
+    </div>
+    <div class = "desc">
+        <h3> 1. Audio Processing and Procedural Terrain Generation </h3>
+        <p> Audio Files analyzed using python, numpy, scipy. First we read in a .wav file using python. </p>
+        <img src="site-images/Figure_1.png" />
+        <p> Then we calculate our image dimensions, for example 500 * 500, and trim our array length so we are eveny divisible. After that we downsample the audio by taking the average over evenly divisible intervals, ending up with our array length being 500 * 500. Then we scale to rgb space 0-255.</p>
+        <img src="site-images/Figure_2.png" />
+        <p>Then we encode the 1 dimension array into a 2 dimension format using a spiral algorithm moving inwards. This is so no information is lost on the edges of the photo.</p>
+        <img src="site-images/spiral.png"/><img src="site-images/Figure_3.png" />
+        <p> Lastly, we apply gaussian noise to the signal wave to smooth out terrain. Our final result is a heightmap written in pgm format. </p>
+        <img src="site-images/Figure_5.png" /> <img id = "map" src="site-images/map.png" />
+    </div>
+
+   
+
+   </body>
+
+</html>

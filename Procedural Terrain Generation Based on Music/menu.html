@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Musical Terrain</title>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+            .header{
+                text-align: center;
+                font-family: 'Space Mono', monospace;
+                position: absolute;
+                left: 40%;
+                color:white;
+            }
+            .nav{
+                font-family: 'Space Mono', monospace;
+                position: absolute;
+                top: 0%;
+                right: 2%;
+                color: white;
+            }
+            .nav:hover, a:hover{
+                text-decoration: underline;
+                cursor: crosshair;
+            }
+            a{
+                font-family: 'Space Mono', monospace;
+                color: white;
+            }
+        </style>
+
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+        <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+    </head>
+
+   <body>
+
+    <div class="header">
+        <h1>Musical Terrain</h1>
+        <p>Thomas Klimek Samuel Oakley</p>
+    </div>
+    <div class="nav">
+        <a href="solution.html">how we did it</a>
+    </div>
+
+    <canvas id="renderCanvas" touch-action="none"></canvas> //touch-action="none" for best results from PEP
+
+    <script>
+        var canvas = document.getElementById("renderCanvas"); // Get the canvas element 
+        var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+        var sceneChoice = 0;
+
+        /******* Add the create scene function ******/
+        var createMenu = function () {
+
+            // Create the scene space
+            var menu = new BABYLON.Scene(engine);
+            
+            
+        // Add a camera to the scene and attach it to the canvas
+            var camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 2 , Math.PI / 2 -1.5, 350, BABYLON.Vector3.Zero(), menu);
+            camera.attachControl(canvas, true);
+            // Add lights to the scene
+            var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), menu);
+
+            // Add and manipulate meshes in the scene
+            var song1 = BABYLON.Mesh.CreateGroundFromHeightMap("song1", "song1-assets/heightmap.jpg", 100, 100, 250, 0, 50, menu, false);
+            var song1Material = new BABYLON.StandardMaterial("song1", menu);
+            song1Material.diffuseTexture = new BABYLON.Texture("song1-assets/texture.jpg", menu);
+            song1.position.x -= 200;
+            song1.material = song1Material;
+
+            song1.actionManager = new BABYLON.ActionManager(menu);
+    
+            song1.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, 
+                function(event){
+                    var pickedMesh = event.meshUnderPointer; 
+
+                    window.open("song1.html");
+                })
+            );
+
+            var song2 = BABYLON.Mesh.CreateGroundFromHeightMap("song2", "song2-assets/heightmap.jpg", 100, 100, 250, 0, 50, menu, false);
+            var song2Material = new BABYLON.StandardMaterial("song2", menu);
+            song2Material.diffuseTexture = new BABYLON.Texture("song2-assets/texture.jpg", menu);
+            song2.material = song2Material;
+
+            song2.actionManager = new BABYLON.ActionManager(menu);
+    
+            song2.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, 
+                function(event){
+                    var pickedMesh = event.meshUnderPointer; 
+
+                    window.open("song2.html");
+                })
+            );
+
+            var song3 = BABYLON.Mesh.CreateGroundFromHeightMap("song3", "song3-assets/heightmap.jpg", 100, 100, 250, 0, 50, menu, false);
+            var song3Material = new BABYLON.StandardMaterial("song3", menu);
+            song3Material.diffuseTexture = new BABYLON.Texture("song3-assets/texture.jpg", menu);
+            song3.position.x += 200;
+            song3.material = song3Material;
+
+            song3.actionManager = new BABYLON.ActionManager(menu);
+    
+            song3.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, 
+                function(event){
+                    var pickedMesh = event.meshUnderPointer; 
+
+                    window.open("song3.html");
+                })
+            );
+
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", menu);
+            var song1Button = new BABYLON.GUI.Button.CreateSimpleButton("s1", "\"Nangs\" -- Tame Impala")
+            song1Button.width = 0.2;
+            song1Button.height = "40px";
+            song1Button.color = "white";
+            song1Button.background = "green";
+            song1Button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            song1Button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            advancedTexture.addControl(song1Button);
+
+
+            var song2Button = new BABYLON.GUI.Button.CreateSimpleButton("s2", "\"John McLaughlin\" -- Miles Davis")
+            song2Button.width = 0.2;
+            song2Button.height = "40px";
+            song2Button.color = "white";
+            song2Button.background = "green";
+            song2Button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            song2Button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            advancedTexture.addControl(song2Button);
+
+
+            var song3Button = new BABYLON.GUI.Button.CreateSimpleButton("s3", "\"Electric Relaxation\" -- A Tribe Called Quest")
+            song3Button.width = 0.2;
+            song3Button.height = "40px";
+            song3Button.color = "white";
+            song3Button.background = "green";
+            song3Button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            song3Button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            advancedTexture.addControl(song3Button);
+
+
+            return menu;
+        };
+        /******* End of the create scene function ******/    
+
+        var menu = createMenu(); //Call the createScene function
+
+
+        // Register a render loop to repeatedly render the scene
+        engine.runRenderLoop(function () { 
+                menu.render();
+        });
+
+        // Watch for browser/canvas resize events
+        window.addEventListener("resize", function () { 
+                engine.resize();
+        });
+    </script>
+
+   </body>
+
+</html>
