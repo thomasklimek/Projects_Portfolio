@@ -1,0 +1,95 @@
+929589.0 total words with 10000 uniques
+WARNING:tensorflow:From /Users/thomasklimek/anaconda3/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From q3_RNNLM.py:143: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+WARNING:tensorflow:From /Users/thomasklimek/anaconda3/lib/python3.7/site-packages/tensorflow/python/ops/array_grad.py:425: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+929589.0 total words with 10000 uniques
+WARNING:tensorflow:From /Users/thomasklimek/anaconda3/lib/python3.7/site-packages/tensorflow/python/util/tf_should_use.py:193: initialize_all_variables (from tensorflow.python.ops.variables) is deprecated and will be removed after 2017-03-02.
+Instructions for updating:
+Use `tf.global_variables_initializer` instead.
+2019-04-05 23:55:52.605420: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+Epoch 0
+Training perplexity: 548.6434936523438
+Validation perplexity: 402.41839599609375
+Total time: 183.33020496368408
+Epoch 1
+Training perplexity: 339.6430358886719
+Validation perplexity: 303.679931640625
+Total time: 170.59084630012512
+Epoch 2
+Training perplexity: 266.12261962890625
+Validation perplexity: 257.2352600097656
+Total time: 167.43183994293213
+Epoch 3
+Training perplexity: 226.54769897460938
+Validation perplexity: 231.0084686279297
+Total time: 164.84081196784973
+Epoch 4
+Training perplexity: 200.94187927246094
+Validation perplexity: 214.7838592529297
+Total time: 180.9558629989624
+Epoch 5
+Training perplexity: 182.94456481933594
+Validation perplexity: 203.84695434570312
+Total time: 176.6791820526123
+Epoch 6
+Training perplexity: 169.5746307373047
+Validation perplexity: 196.60067749023438
+Total time: 174.7290849685669
+Epoch 7
+Training perplexity: 159.1343536376953
+Validation perplexity: 191.462158203125
+Total time: 175.6094992160797
+Epoch 8
+Training perplexity: 150.68679809570312
+Validation perplexity: 188.14036560058594
+Total time: 175.4357659816742
+Epoch 9
+Training perplexity: 143.50729370117188
+Validation perplexity: 185.84857177734375
+Total time: 177.34438300132751
+Epoch 10
+Training perplexity: 137.386962890625
+Validation perplexity: 184.7198944091797
+Total time: 175.70947289466858
+Epoch 11
+Training perplexity: 132.116699218754
+Validation perplexity: 184.16476440429688
+Total time: 175.17039608955383
+Epoch 12
+Training perplexity: 127.40714263916016
+Validation perplexity: 184.17723083496094
+Total time: 164.14050316810608
+Epoch 13
+Training perplexity: 123.32588195800781
+Validation perplexity: 184.7635040283203
+Total time: 163.1734597682953
+Epoch 14
+Training perplexity: 119.59066772460938
+Validation perplexity: 185.84280395507812
+WARNING:tensorflow:From /Users/thomasklimek/anaconda3/lib/python3.7/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+=-==-==-==-==-== 165.82891845703125
+Test perplexity: 165.6181640625
+=-==-==-==-==-=
+
+
+in boston working was into the the committee <unk> <eos>
+
+
+they have were to twice use and of reduce that americans shows relating seeking to founder build 's and gm other are brokerage engineers associates and corp. <unk> of equipment huge net gas <unk> from <eos>
+
+
+please case on it <eos>
+
+
+today of <unk> valley companies are basically holders <eos>
+
+
+the president release bush that and provide many game of to investors grab have new by military providing accounting north lines houses which often bills voluntarily on national renewing space tax research scheme but according the to labor-management find N itself N to N N years drop u.s. squeezed officials capital with <eos>
