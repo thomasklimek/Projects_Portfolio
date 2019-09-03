@@ -2,6 +2,9 @@ RL Music Harmonizer
 
 by Ben and Tom
 
+Report: https://docs.google.com/document/d/1yq9pi2x84WfvKvAxcEEyNZrCHnX4kWUD39sCHyjwgxo/edit?usp=sharing
+
+
 Developed on macOS in python3
 library dependencies: mido,pygame,numpy
 Requires admin privledge for to accept keyboard input
